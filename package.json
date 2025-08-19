@@ -1,12 +1,12 @@
 {
   "name": "smarttoolkit",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "description": "A toolkit with various smart tools.",
+  "main": "src/app/page.js",
   "scripts": {
-    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "dev": "next dev"
   },
   "dependencies": {
     "react": "19.1.0",
