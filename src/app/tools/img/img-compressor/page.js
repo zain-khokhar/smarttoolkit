@@ -48,6 +48,61 @@ export default function ImgCompressor() {
     return cores >= 4 && memory >= 4;
   }
 
+                  // user media files filter
+
+async function openFilteredPicker(maxSizeMB = 10) {
+  // Prefer File System Access API if available (filters by extensions only)
+  if (window.showOpenFilePicker) {
+    try {
+      while (true) {
+        const handles = await window.showOpenFilePicker({
+          multiple: true,
+          types: [
+            {
+              description: "Images",
+              accept: {
+                "image/*": [".jpg", ".jpeg", ".png", ".webp"]
+              }
+            }
+          ]
+        });
+
+        const files = await Promise.all(handles.map((h) => h.getFile()));
+
+        // filter invalid by type/size
+        const invalid = files.filter(
+          (f) => !f.type?.startsWith("image/") || f.size > maxSizeMB * 1024 * 1024
+        );
+
+        if (invalid.length === 0) {
+          handleFiles(files); // use your existing handler
+          break;
+        }
+
+        // show invalid list and ask user to re-open picker or keep valid ones
+        const msg =
+          `These files are not allowed (max ${maxSizeMB}MB):\n\n` +
+          invalid.map((f) => `${f.name} - ${(f.size / 1024 / 1024).toFixed(2)} MB`).join("\n");
+
+        const retry = confirm(`${msg}\n\nClick OK to re-open picker and choose again.\nClick Cancel to accept only valid files (if any).`);
+        if (!retry) {
+          const valid = files.filter((f) => f.type?.startsWith("image/") && f.size <= maxSizeMB * 1024 * 1024);
+          if (valid.length) handleFiles(valid);
+          break;
+        }
+        // else loop to re-open picker
+      }
+    } catch (err) {
+      // user cancelled or error — do nothing
+    }
+  } else {
+    // fallback: trigger hidden input (your existing input has accept="image/*")
+    fileInputRef.current?.click();
+  }
+}
+
+
+
   // Handle file(s) selection or drop
   function handleFiles(files) {
     const maxSizeMB = 10;
