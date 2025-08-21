@@ -1,342 +1,3 @@
-// "use client"
-// // pages/word-counter.js
-// import React, { useState, useEffect, useRef } from 'react';
-// import { ThemeProvider, useTheme } from 'next-themes'; // For dark/light mode
-// import syllable from 'syllable'; // For Flesch score syllable count
-// import stringSimilarity from 'string-similarity'; // For internal plagiarism similarity
-// import jsPDF from 'jspdf'; // For PDF export
-// import { Packer } from 'docx'; // For DOCX export
-// import { Document, Paragraph, TextRun } from 'docx';
-// import { saveAs } from 'file-saver'; // For file downloads
-
-// // Main functional component for the Word Counter page
-// const WordCounter = () => {
-//   // State for text input
-//   const [text, setText] = useState('');
-//   // History for undo/redo
-//   const [history, setHistory] = useState([]);
-//   const [historyIndex, setHistoryIndex] = useState(-1);
-//   // Stats state (updated in real-time)
-//   const [stats, setStats] = useState({
-//     wordCount: 0,
-//     charCount: 0,
-//     charCountNoSpaces: 0,
-//     sentenceCount: 0,
-//     paragraphCount: 0,
-//     readingTime: 0,
-//     speakingTime: 0,
-//     fleschScore: 0,
-//     wordFrequency: {},
-//     keywordDensity: {},
-//   });
-//   // For find & replace
-//   const [findText, setFindText] = useState('');
-//   const [replaceText, setReplaceText] = useState('');
-//   // For custom limits
-//   const [wordLimit, setWordLimit] = useState(0);
-//   const [charLimit, setCharLimit] = useState(0);
-//   // For plagiarism results
-//   const [plagiarismResult, setPlagiarismResult] = useState(null);
-//   // For synonym/grammar suggestions
-//   const [selectedWord, setSelectedWord] = useState('');
-//   const [synonyms, setSynonyms] = useState([]);
-//   const [grammarSuggestions, setGrammarSuggestions] = useState([]);
-//   // Dark mode (using next-themes)
-//   const { theme, setTheme } = useTheme();
-//   // Ref for textarea
-//   const textAreaRef = useRef(null);
-
-//   // Function to calculate all stats
-//   const calculateStats = (inputText) => {
-//     if (!inputText) return { /* default stats */ };
-//     const words = inputText.match(/\b\w+\b/g) || [];
-//     const sentences = inputText.match(/[^\.!\?]+[\.!\?]+/g) || [];
-//     const paragraphs = inputText.split(/\n\s*\n/).filter(p => p.trim());
-//     const charCount = inputText.length;
-//     const charCountNoSpaces = inputText.replace(/\s/g, '').length;
-//     const wordCount = words.length;
-//     const sentenceCount = sentences.length;
-//     const paragraphCount = paragraphs.length;
-//     // Reading time: ~200 wpm
-//     const readingTime = Math.ceil(wordCount / 200);
-//     // Speaking time: ~150 wpm
-//     const speakingTime = Math.ceil(wordCount / 150);
-//     // Flesch score calculation
-//     const totalSyllables = words.reduce((acc, word) => acc + syllable(word), 0);
-//     const avgSentenceLength = wordCount / sentenceCount || 0;
-//     const avgSyllablesPerWord = totalSyllables / wordCount || 0;
-//     const fleschScore = 206.835 - 1.015 * avgSentenceLength - 84.6 * avgSyllablesPerWord;
-//     // Word frequency
-//     const frequency = words.reduce((acc, word) => {
-//       const lower = word.toLowerCase();
-//       acc[lower] = (acc[lower] || 0) + 1;
-//       return acc;
-//     }, {});
-//     // Keyword density (percentage for each word)
-//     const density = Object.fromEntries(
-//       Object.entries(frequency).map(([word, count]) => [word, ((count / wordCount) * 100).toFixed(2)])
-//     );
-
-//     return {
-//       wordCount,
-//       charCount,
-//       charCountNoSpaces,
-//       sentenceCount,
-//       paragraphCount,
-//       readingTime,
-//       speakingTime,
-//       fleschScore: fleschScore.toFixed(2),
-//       wordFrequency: frequency,
-//       keywordDensity: density,
-//     };
-//   };
-
-//   // Real-time stats update and auto-save
-//   useEffect(() => {
-//     const newStats = calculateStats(text);
-//     setStats(newStats);
-//     // Auto-save to localStorage
-//     localStorage.setItem('draft', text);
-//     // Check limits
-//     if (wordLimit > 0 && newStats.wordCount > wordLimit) alert('Word limit exceeded!');
-//     if (charLimit > 0 && newStats.charCount > charLimit) alert('Character limit exceeded!');
-//   }, [text, wordLimit, charLimit]);
-
-//   // Load draft on mount for auto-save
-//   useEffect(() => {
-//     const savedDraft = localStorage.getItem('draft');
-//     if (savedDraft) setText(savedDraft);
-//   }, []);
-
-//   // Function for undo
-//   const undo = () => {
-//     if (historyIndex > 0) {
-//       setHistoryIndex(historyIndex - 1);
-//       setText(history[historyIndex - 1]);
-//     }
-//   };
-
-//   // Function for redo
-//   const redo = () => {
-//     if (historyIndex < history.length - 1) {
-//       setHistoryIndex(historyIndex + 1);
-//       setText(history[historyIndex + 1]);
-//     }
-//   };
-
-//   // Update history on text change
-//   const handleTextChange = (e) => {
-//     const newText = e.target.value;
-//     setText(newText);
-//     const newHistory = [...history.slice(0, historyIndex + 1), newText];
-//     setHistory(newHistory);
-//     setHistoryIndex(newHistory.length - 1);
-//   };
-
-//   // Clear text
-//   const clearText = () => setText('');
-
-//   // Copy text
-//   const copyText = () => navigator.clipboard.writeText(text);
-
-//   // Cut text
-//   const cutText = () => {
-//     navigator.clipboard.writeText(text);
-//     setText('');
-//   };
-
-//   // Paste (handled by browser, but can add custom if needed)
-
-//   // Text formatting functions
-//   const toUpperCase = () => setText(text.toUpperCase());
-//   const toLowerCase = () => setText(text.toLowerCase());
-//   const toTitleCase = () => setText(text.replace(/\b\w/g, (char) => char.toUpperCase()));
-//   const toSentenceCase = () => setText(text.replace(/^\s*([a-z])|[.!?]\s*([a-z])/g, (char) => char.toUpperCase()));
-//   const capitalize = toTitleCase; // Alias
-//   const removeExtraSpaces = () => setText(text.replace(/\s+/g, ' ').trim());
-//   const trimText = () => setText(text.trim());
-
-//   // Find and replace
-//   const findReplace = () => setText(text.replace(new RegExp(findText, 'g'), replaceText));
-
-//   // Word highlight (simple CSS highlight for frequency >1)
-//   const highlightWords = () => {
-//     // For demo, console.log high frequency words; in UI, use spans
-//     console.log('Highlighted words:', Object.keys(stats.wordFrequency).filter(word => stats.wordFrequency[word] > 1));
-//   };
-
-//   // Plagiarism check (internal + external)
-//   const checkPlagiarism = async () => {
-//     // Internal: compare with saved drafts (assume array in localStorage)
-//     const savedTexts = JSON.parse(localStorage.getItem('savedTexts') || '[]');
-//     const internalSimilarities = savedTexts.map(saved => stringSimilarity.compareTwoStrings(text, saved));
-//     const maxInternal = Math.max(...internalSimilarities) * 100;
-//     // External: Winston AI API (placeholder, replace with real call)
-//     try {
-//       const response = await fetch('https://api.gowinston.ai/v1/plagiarism', { // Endpoint from docs
-//         method: 'POST',
-//         headers: { 'Authorization': `Bearer ${process.env.WINSTON_API_KEY}`, 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ text }),
-//       });
-//       const data = await response.json();
-//       const externalScore = data.score; // Assume score from API
-//       setPlagiarismResult({ internal: maxInternal.toFixed(2), external: externalScore });
-//     } catch (error) {
-//       console.error('Plagiarism API error:', error);
-//     }
-//   };
-
-//   // Synonym suggestions (on word select)
-//   const getSynonyms = async (word) => {
-//     try {
-//       const response = await fetch(`http://words.bighugelabs.com/api/2/${process.env.BIG_HUGE_KEY}/${word}/json`);
-//       const data = await response.json();
-//       setSynonyms(data.noun?.syn || []);
-//     } catch (error) {
-//       console.error('Synonym API error:', error);
-//     }
-//   };
-
-//   // Grammar suggestions
-//   const getGrammarSuggestions = async () => {
-//     try {
-//       const response = await fetch('https://api.grammarbot.io/v2/check', {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ text, language: 'en-US' }),
-//       });
-//       const data = await response.json();
-//       setGrammarSuggestions(data.matches);
-//     } catch (error) {
-//       console.error('Grammar API error:', error);
-//     }
-//   };
-
-//   // Export functions
-//   const exportTXT = () => {
-//     const blob = new Blob([text], { type: 'text/plain' });
-//     saveAs(blob, 'document.txt');
-//   };
-
-//   const exportPDF = () => {
-//     const doc = new jsPDF();
-//     doc.text(text, 10, 10);
-//     doc.save('document.pdf');
-//   };
-
-//   const exportDOCX = async () => {
-//     const doc = new Document({
-//       sections: [{ properties: {}, children: [new Paragraph({ children: [new TextRun(text)] })] }],
-//     });
-//     const blob = await Packer.toBlob(doc);
-//     saveAs(blob, 'document.docx');
-//   };
-
-//   // Share link (simple copy, or backend for real share)
-//   const shareLink = () => {
-//     // For demo, copy text; real: generate URL
-//     copyText();
-//     alert('Text copied! Share manually.');
-//   };
-
-//   // UI rendering
-//   return (
-//     <div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
-//       {/* Toolbar */}
-//       <div className="flex flex-wrap gap-2 mb-4">
-//         {/* Formatting buttons with transitions */}
-//         <button className="btn" onClick={toUpperCase}>Uppercase</button>
-//         <button className="btn" onClick={toLowerCase}>Lowercase</button>
-//         {/* ... other formatting buttons */}
-//         <input type="text" placeholder="Find" onChange={(e) => setFindText(e.target.value)} className="input" />
-//         <input type="text" placeholder="Replace" onChange={(e) => setReplaceText(e.target.value)} className="input" />
-//         <button className="btn" onClick={findReplace}>Replace</button>
-//         {/* Editing */}
-//         <button className="btn" onClick={undo}>Undo</button>
-//         <button className="btn" onClick={redo}>Redo</button>
-//         <button className="btn" onClick={clearText}>Clear</button>
-//         <button className="btn" onClick={copyText}>Copy</button>
-//         <button className="btn" onClick={cutText}>Cut</button>
-//         {/* Advanced */}
-//         <button className="btn" onClick={checkPlagiarism}>Check Plagiarism</button>
-//         <button className="btn" onClick={getGrammarSuggestions}>Grammar Check</button>
-//         <button className="btn" onClick={() => getSynonyms(selectedWord)}>Synonyms for {selectedWord}</button>
-//         <button className="btn" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>Toggle Mode</button>
-//         {/* Exports */}
-//         <button className="btn" onClick={exportTXT}>TXT</button>
-//         <button className="btn" onClick={exportPDF}>PDF</button>
-//         <button className="btn" onClick={exportDOCX}>DOCX</button>
-//         <button className="btn" onClick={shareLink}>Share</button>
-//         {/* Limits */}
-//         <input type="number" placeholder="Word Limit" onChange={(e) => setWordLimit(Number(e.target.value))} className="input" />
-//         <input type="number" placeholder="Char Limit" onChange={(e) => setCharLimit(Number(e.target.value))} className="input" />
-//       </div>
-//       {/* Text Input */}
-//       <textarea
-//         ref={textAreaRef}
-//         value={text}
-//         onChange={handleTextChange}
-//         onSelect={(e) => setSelectedWord(e.target.value.slice(e.target.selectionStart, e.target.selectionEnd))}
-//         className="w-full h-64 p-2 border rounded mb-4 transition-all duration-300"
-//         placeholder="Enter your text here..."
-//       />
-//       {/* Stats Panel */}
-//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-//         <div>Words: {stats.wordCount}</div>
-//         <div>Chars (with spaces): {stats.charCount}</div>
-//         <div>Chars (no spaces): {stats.charCountNoSpaces}</div>
-//         <div>Sentences: {stats.sentenceCount}</div>
-//         <div>Paragraphs: {stats.paragraphCount}</div>
-//         <div>Reading Time: {stats.readingTime} min</div>
-//         <div>Speaking Time: {stats.speakingTime} min</div>
-//         <div>Flesch Score: {stats.fleschScore}</div>
-//         {/* Plagiarism */}
-//         {plagiarismResult && (
-//           <div>Plagiarism: Internal {plagiarismResult.internal}%, External {plagiarismResult.external}%</div>
-//         )}
-//         {/* Grammar Suggestions */}
-//         {grammarSuggestions.length > 0 && (
-//           <ul>
-//             {grammarSuggestions.map((sug, i) => <li key={i}>{sug.message}</li>)}
-//           </ul>
-//         )}
-//         {/* Synonyms */}
-//         {synonyms.length > 0 && (
-//           <ul>
-//             {synonyms.map((syn, i) => <li key={i}>{syn}</li>)}
-//           </ul>
-//         )}
-//         {/* Word Frequency Table */}
-//         <table className="table-auto">
-//           <thead><tr><th>Word</th><th>Frequency</th><th>Density</th></tr></thead>
-//           <tbody>
-//             {Object.entries(stats.wordFrequency).map(([word, freq]) => (
-//               <tr key={word}><td>{word}</td><td>{freq}</td><td>{stats.keywordDensity[word]}%</td></tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       </div>
-//     </div>
-//   );
-// };
-
-// // Wrap with ThemeProvider
-// export default function Page() {
-//   return (
-//     <ThemeProvider attribute="class">
-//       <WordCounter />
-//     </ThemeProvider>
-//   );
-// }
-
-// // CSS classes (add to global.css or inline)
-// const styles = `
-// .btn { padding: 0.5rem 1rem; background: blue; color: white; border-radius: 0.25rem; transition: background 0.3s; }
-// .btn:hover { background: darkblue; }
-// .input { padding: 0.5rem; border: 1px solid gray; border-radius: 0.25rem; }
-// `;
-
-
 "use client"
 import React, { useEffect, useRef, useState } from "react";
 
@@ -900,3 +561,342 @@ export default function PremiumWordCounterPage() {
     return w || "";
   }
 }
+
+
+// "use client"
+// // pages/word-counter.js
+// import React, { useState, useEffect, useRef } from 'react';
+// import { ThemeProvider, useTheme } from 'next-themes'; // For dark/light mode
+// import syllable from 'syllable'; // For Flesch score syllable count
+// import stringSimilarity from 'string-similarity'; // For internal plagiarism similarity
+// import jsPDF from 'jspdf'; // For PDF export
+// import { Packer } from 'docx'; // For DOCX export
+// import { Document, Paragraph, TextRun } from 'docx';
+// import { saveAs } from 'file-saver'; // For file downloads
+
+// // Main functional component for the Word Counter page
+// const WordCounter = () => {
+//   // State for text input
+//   const [text, setText] = useState('');
+//   // History for undo/redo
+//   const [history, setHistory] = useState([]);
+//   const [historyIndex, setHistoryIndex] = useState(-1);
+//   // Stats state (updated in real-time)
+//   const [stats, setStats] = useState({
+//     wordCount: 0,
+//     charCount: 0,
+//     charCountNoSpaces: 0,
+//     sentenceCount: 0,
+//     paragraphCount: 0,
+//     readingTime: 0,
+//     speakingTime: 0,
+//     fleschScore: 0,
+//     wordFrequency: {},
+//     keywordDensity: {},
+//   });
+//   // For find & replace
+//   const [findText, setFindText] = useState('');
+//   const [replaceText, setReplaceText] = useState('');
+//   // For custom limits
+//   const [wordLimit, setWordLimit] = useState(0);
+//   const [charLimit, setCharLimit] = useState(0);
+//   // For plagiarism results
+//   const [plagiarismResult, setPlagiarismResult] = useState(null);
+//   // For synonym/grammar suggestions
+//   const [selectedWord, setSelectedWord] = useState('');
+//   const [synonyms, setSynonyms] = useState([]);
+//   const [grammarSuggestions, setGrammarSuggestions] = useState([]);
+//   // Dark mode (using next-themes)
+//   const { theme, setTheme } = useTheme();
+//   // Ref for textarea
+//   const textAreaRef = useRef(null);
+
+//   // Function to calculate all stats
+//   const calculateStats = (inputText) => {
+//     if (!inputText) return { /* default stats */ };
+//     const words = inputText.match(/\b\w+\b/g) || [];
+//     const sentences = inputText.match(/[^\.!\?]+[\.!\?]+/g) || [];
+//     const paragraphs = inputText.split(/\n\s*\n/).filter(p => p.trim());
+//     const charCount = inputText.length;
+//     const charCountNoSpaces = inputText.replace(/\s/g, '').length;
+//     const wordCount = words.length;
+//     const sentenceCount = sentences.length;
+//     const paragraphCount = paragraphs.length;
+//     // Reading time: ~200 wpm
+//     const readingTime = Math.ceil(wordCount / 200);
+//     // Speaking time: ~150 wpm
+//     const speakingTime = Math.ceil(wordCount / 150);
+//     // Flesch score calculation
+//     const totalSyllables = words.reduce((acc, word) => acc + syllable(word), 0);
+//     const avgSentenceLength = wordCount / sentenceCount || 0;
+//     const avgSyllablesPerWord = totalSyllables / wordCount || 0;
+//     const fleschScore = 206.835 - 1.015 * avgSentenceLength - 84.6 * avgSyllablesPerWord;
+//     // Word frequency
+//     const frequency = words.reduce((acc, word) => {
+//       const lower = word.toLowerCase();
+//       acc[lower] = (acc[lower] || 0) + 1;
+//       return acc;
+//     }, {});
+//     // Keyword density (percentage for each word)
+//     const density = Object.fromEntries(
+//       Object.entries(frequency).map(([word, count]) => [word, ((count / wordCount) * 100).toFixed(2)])
+//     );
+
+//     return {
+//       wordCount,
+//       charCount,
+//       charCountNoSpaces,
+//       sentenceCount,
+//       paragraphCount,
+//       readingTime,
+//       speakingTime,
+//       fleschScore: fleschScore.toFixed(2),
+//       wordFrequency: frequency,
+//       keywordDensity: density,
+//     };
+//   };
+
+//   // Real-time stats update and auto-save
+//   useEffect(() => {
+//     const newStats = calculateStats(text);
+//     setStats(newStats);
+//     // Auto-save to localStorage
+//     localStorage.setItem('draft', text);
+//     // Check limits
+//     if (wordLimit > 0 && newStats.wordCount > wordLimit) alert('Word limit exceeded!');
+//     if (charLimit > 0 && newStats.charCount > charLimit) alert('Character limit exceeded!');
+//   }, [text, wordLimit, charLimit]);
+
+//   // Load draft on mount for auto-save
+//   useEffect(() => {
+//     const savedDraft = localStorage.getItem('draft');
+//     if (savedDraft) setText(savedDraft);
+//   }, []);
+
+//   // Function for undo
+//   const undo = () => {
+//     if (historyIndex > 0) {
+//       setHistoryIndex(historyIndex - 1);
+//       setText(history[historyIndex - 1]);
+//     }
+//   };
+
+//   // Function for redo
+//   const redo = () => {
+//     if (historyIndex < history.length - 1) {
+//       setHistoryIndex(historyIndex + 1);
+//       setText(history[historyIndex + 1]);
+//     }
+//   };
+
+//   // Update history on text change
+//   const handleTextChange = (e) => {
+//     const newText = e.target.value;
+//     setText(newText);
+//     const newHistory = [...history.slice(0, historyIndex + 1), newText];
+//     setHistory(newHistory);
+//     setHistoryIndex(newHistory.length - 1);
+//   };
+
+//   // Clear text
+//   const clearText = () => setText('');
+
+//   // Copy text
+//   const copyText = () => navigator.clipboard.writeText(text);
+
+//   // Cut text
+//   const cutText = () => {
+//     navigator.clipboard.writeText(text);
+//     setText('');
+//   };
+
+//   // Paste (handled by browser, but can add custom if needed)
+
+//   // Text formatting functions
+//   const toUpperCase = () => setText(text.toUpperCase());
+//   const toLowerCase = () => setText(text.toLowerCase());
+//   const toTitleCase = () => setText(text.replace(/\b\w/g, (char) => char.toUpperCase()));
+//   const toSentenceCase = () => setText(text.replace(/^\s*([a-z])|[.!?]\s*([a-z])/g, (char) => char.toUpperCase()));
+//   const capitalize = toTitleCase; // Alias
+//   const removeExtraSpaces = () => setText(text.replace(/\s+/g, ' ').trim());
+//   const trimText = () => setText(text.trim());
+
+//   // Find and replace
+//   const findReplace = () => setText(text.replace(new RegExp(findText, 'g'), replaceText));
+
+//   // Word highlight (simple CSS highlight for frequency >1)
+//   const highlightWords = () => {
+//     // For demo, console.log high frequency words; in UI, use spans
+//     console.log('Highlighted words:', Object.keys(stats.wordFrequency).filter(word => stats.wordFrequency[word] > 1));
+//   };
+
+//   // Plagiarism check (internal + external)
+//   const checkPlagiarism = async () => {
+//     // Internal: compare with saved drafts (assume array in localStorage)
+//     const savedTexts = JSON.parse(localStorage.getItem('savedTexts') || '[]');
+//     const internalSimilarities = savedTexts.map(saved => stringSimilarity.compareTwoStrings(text, saved));
+//     const maxInternal = Math.max(...internalSimilarities) * 100;
+//     // External: Winston AI API (placeholder, replace with real call)
+//     try {
+//       const response = await fetch('https://api.gowinston.ai/v1/plagiarism', { // Endpoint from docs
+//         method: 'POST',
+//         headers: { 'Authorization': `Bearer ${process.env.WINSTON_API_KEY}`, 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ text }),
+//       });
+//       const data = await response.json();
+//       const externalScore = data.score; // Assume score from API
+//       setPlagiarismResult({ internal: maxInternal.toFixed(2), external: externalScore });
+//     } catch (error) {
+//       console.error('Plagiarism API error:', error);
+//     }
+//   };
+
+//   // Synonym suggestions (on word select)
+//   const getSynonyms = async (word) => {
+//     try {
+//       const response = await fetch(`http://words.bighugelabs.com/api/2/${process.env.BIG_HUGE_KEY}/${word}/json`);
+//       const data = await response.json();
+//       setSynonyms(data.noun?.syn || []);
+//     } catch (error) {
+//       console.error('Synonym API error:', error);
+//     }
+//   };
+
+//   // Grammar suggestions
+//   const getGrammarSuggestions = async () => {
+//     try {
+//       const response = await fetch('https://api.grammarbot.io/v2/check', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ text, language: 'en-US' }),
+//       });
+//       const data = await response.json();
+//       setGrammarSuggestions(data.matches);
+//     } catch (error) {
+//       console.error('Grammar API error:', error);
+//     }
+//   };
+
+//   // Export functions
+//   const exportTXT = () => {
+//     const blob = new Blob([text], { type: 'text/plain' });
+//     saveAs(blob, 'document.txt');
+//   };
+
+//   const exportPDF = () => {
+//     const doc = new jsPDF();
+//     doc.text(text, 10, 10);
+//     doc.save('document.pdf');
+//   };
+
+//   const exportDOCX = async () => {
+//     const doc = new Document({
+//       sections: [{ properties: {}, children: [new Paragraph({ children: [new TextRun(text)] })] }],
+//     });
+//     const blob = await Packer.toBlob(doc);
+//     saveAs(blob, 'document.docx');
+//   };
+
+//   // Share link (simple copy, or backend for real share)
+//   const shareLink = () => {
+//     // For demo, copy text; real: generate URL
+//     copyText();
+//     alert('Text copied! Share manually.');
+//   };
+
+//   // UI rendering
+//   return (
+//     <div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
+//       {/* Toolbar */}
+//       <div className="flex flex-wrap gap-2 mb-4">
+//         {/* Formatting buttons with transitions */}
+//         <button className="btn" onClick={toUpperCase}>Uppercase</button>
+//         <button className="btn" onClick={toLowerCase}>Lowercase</button>
+//         {/* ... other formatting buttons */}
+//         <input type="text" placeholder="Find" onChange={(e) => setFindText(e.target.value)} className="input" />
+//         <input type="text" placeholder="Replace" onChange={(e) => setReplaceText(e.target.value)} className="input" />
+//         <button className="btn" onClick={findReplace}>Replace</button>
+//         {/* Editing */}
+//         <button className="btn" onClick={undo}>Undo</button>
+//         <button className="btn" onClick={redo}>Redo</button>
+//         <button className="btn" onClick={clearText}>Clear</button>
+//         <button className="btn" onClick={copyText}>Copy</button>
+//         <button className="btn" onClick={cutText}>Cut</button>
+//         {/* Advanced */}
+//         <button className="btn" onClick={checkPlagiarism}>Check Plagiarism</button>
+//         <button className="btn" onClick={getGrammarSuggestions}>Grammar Check</button>
+//         <button className="btn" onClick={() => getSynonyms(selectedWord)}>Synonyms for {selectedWord}</button>
+//         <button className="btn" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>Toggle Mode</button>
+//         {/* Exports */}
+//         <button className="btn" onClick={exportTXT}>TXT</button>
+//         <button className="btn" onClick={exportPDF}>PDF</button>
+//         <button className="btn" onClick={exportDOCX}>DOCX</button>
+//         <button className="btn" onClick={shareLink}>Share</button>
+//         {/* Limits */}
+//         <input type="number" placeholder="Word Limit" onChange={(e) => setWordLimit(Number(e.target.value))} className="input" />
+//         <input type="number" placeholder="Char Limit" onChange={(e) => setCharLimit(Number(e.target.value))} className="input" />
+//       </div>
+//       {/* Text Input */}
+//       <textarea
+//         ref={textAreaRef}
+//         value={text}
+//         onChange={handleTextChange}
+//         onSelect={(e) => setSelectedWord(e.target.value.slice(e.target.selectionStart, e.target.selectionEnd))}
+//         className="w-full h-64 p-2 border rounded mb-4 transition-all duration-300"
+//         placeholder="Enter your text here..."
+//       />
+//       {/* Stats Panel */}
+//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+//         <div>Words: {stats.wordCount}</div>
+//         <div>Chars (with spaces): {stats.charCount}</div>
+//         <div>Chars (no spaces): {stats.charCountNoSpaces}</div>
+//         <div>Sentences: {stats.sentenceCount}</div>
+//         <div>Paragraphs: {stats.paragraphCount}</div>
+//         <div>Reading Time: {stats.readingTime} min</div>
+//         <div>Speaking Time: {stats.speakingTime} min</div>
+//         <div>Flesch Score: {stats.fleschScore}</div>
+//         {/* Plagiarism */}
+//         {plagiarismResult && (
+//           <div>Plagiarism: Internal {plagiarismResult.internal}%, External {plagiarismResult.external}%</div>
+//         )}
+//         {/* Grammar Suggestions */}
+//         {grammarSuggestions.length > 0 && (
+//           <ul>
+//             {grammarSuggestions.map((sug, i) => <li key={i}>{sug.message}</li>)}
+//           </ul>
+//         )}
+//         {/* Synonyms */}
+//         {synonyms.length > 0 && (
+//           <ul>
+//             {synonyms.map((syn, i) => <li key={i}>{syn}</li>)}
+//           </ul>
+//         )}
+//         {/* Word Frequency Table */}
+//         <table className="table-auto">
+//           <thead><tr><th>Word</th><th>Frequency</th><th>Density</th></tr></thead>
+//           <tbody>
+//             {Object.entries(stats.wordFrequency).map(([word, freq]) => (
+//               <tr key={word}><td>{word}</td><td>{freq}</td><td>{stats.keywordDensity[word]}%</td></tr>
+//             ))}
+//           </tbody>
+//         </table>
+//       </div>
+//     </div>
+//   );
+// };
+
+// // Wrap with ThemeProvider
+// export default function Page() {
+//   return (
+//     <ThemeProvider attribute="class">
+//       <WordCounter />
+//     </ThemeProvider>
+//   );
+// }
+
+// // CSS classes (add to global.css or inline)
+// const styles = `
+// .btn { padding: 0.5rem 1rem; background: blue; color: white; border-radius: 0.25rem; transition: background 0.3s; }
+// .btn:hover { background: darkblue; }
+// .input { padding: 0.5rem; border: 1px solid gray; border-radius: 0.25rem; }
+// `;
