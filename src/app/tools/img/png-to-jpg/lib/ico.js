@@ -151,10 +151,10 @@ export async function decodeICO(file) {
   // Convert dataURL → ImageBitmap
   // const res = await fetch(largest.dataURL);
   // const blob = await res.blob();
- 
+
   const blob = new Blob([largest.buffer], { type: "image/png" });
   const url = URL.createObjectURL(blob);
-   const bmp = await createImageBitmap(blob);
+  const bmp = await createImageBitmap(blob);
   console.log("🖼️ Created ImageBitmap:", bmp);
   // Draw onto canvas
   const canvas = document.createElement("canvas");

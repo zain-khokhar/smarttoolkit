@@ -1,5 +1,6 @@
 // src/lib/tiffDecoder.js
 "use client";
+const loadUTIF = () => import("utif");
 
 export async function decodeTIFF(file) {
   const UTIF = (await import("utif")).default;
@@ -26,3 +27,10 @@ export async function decodeTIFF(file) {
 
   return { frames, width: w, height: h, animated: frames.length > 1 };
 }
+export const encodeTIFF = async (frames, w, h) => {
+  const UTIF = await loadUTIF();
+  // Encode first frame (simple, reliable). You can extend to multi-page by building multiple IFDs.
+  const rgba = frames[0].imageData.data;
+  const tiff = UTIF.encodeImage(rgba, w, h);
+  return new Blob([new Uint8Array(tiff)], { type: "image/tiff" });
+};
