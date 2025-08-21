@@ -1,30 +1,60 @@
-"use server";
 
-import sharp from "sharp";
-import path from "path";
 
-export async function encodeAVIF(frame, w, h, quality = 80) {
-  // frame.imageData = ImageData
-  // Convert ImageData to raw RGBA buffer
-  const buffer = Buffer.from(frame.imageData.data);
+/**
+ * Convert a canvas frame to AVIF via server-side API.
+ * @param {HTMLCanvasElement} canvas - The rendered image canvas.
+ * @param {number} quality - Compression quality (1-100).
+ * @returns {Promise<Blob>} - The resulting AVIF blob.
+ */
+export async function encodeAVIF(canvas, quality = 80) {
+  // First, turn canvas into a PNG blob
+  const pngBlob = await new Promise((resolve) =>
+    canvas.toBlob(resolve, "image/png")
+  );
 
-  // Sharp expects raw input like { raw: { width, height, channels } }
-  const outputName = `converted-${Date.now()}.avif`;
-  const outputPath = path.join(process.cwd(), "public", outputName);
+  // Convert browser Blob -> Node-like File
+  const file = new File([pngBlob], "frame.png", { type: "image/png" });
 
-  await sharp(buffer, {
-    raw: { width: w, height: h, channels: 4 } // RGBA
-  })
-    .avif({ quality })
-    .toFile(outputPath);
+  // Prepare FormData
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("quality", quality.toString());
 
-  return `/` + outputName; // return public URL
+  // Call server-side AVIF encoder
+  const response = await fetch("/api/encodeavif", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error || "Failed to encode AVIF");
+  }
+
+  return await response.blob();
 }
-export const decodeAVIF = async (file) => {
-    const bmp = await createImageBitmap(file); // file = Blob or File
-    const canvas = new OffscreenCanvas(bmp.width, bmp.height);
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(bmp, 0, 0);
-    const imageData = ctx.getImageData(0, 0, bmp.width, bmp.height);
-    return { frames: [{ imageData }], width: bmp.width, height: bmp.height, animated: false };
+// src/lib/decodeAVIF.js
+// src/lib/decodeAVIF.js
+export const decodeAVIF = async (file, format = "png") => {
+  if (!(file instanceof File)) {
+    throw new Error("decodeAVIF expects a File object (from <input> or drag-drop).");
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("format", format);
+
+  const res = await fetch("/api/decodeavif", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    console.error("DecodeAVIF API error:", err);
+    throw new Error(`Decode failed: ${err}`);
+  }
+
+  return await res.blob(); // <-- returns decoded PNG/JPEG blob
 };
+
