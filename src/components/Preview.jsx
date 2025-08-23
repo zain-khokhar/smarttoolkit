@@ -44,18 +44,33 @@ export default function ImageTool() {
     }
   }, []);
 
-  const SAMPLE_PATH = "/sample.jpg";
+  const SAMPLE_PATH = '/vercel.svg'; // Using vercel.svg which exists in public folder
   const PLACEHOLDER = `data:image/svg+xml;utf8,${encodeURIComponent(`
     <svg xmlns='http://www.w3.org/2000/svg' width='800' height='500'>
       <rect width='100%' height='100%' fill='%23121212'/>
       <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23777' font-size='20'>
-        sample.jpg not found — drop an image or choose file
+        a(1).png not found — drop an image or choose file
       </text>
     </svg>
   `)}`;
 
   useEffect(() => {
-    setOrigSrc(SAMPLE_PATH);
+    const loadSampleImage = async () => {
+      try {
+        // Pre-load the image to verify it exists
+        const img = new Image();
+        img.src = SAMPLE_PATH;
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = () => reject(new Error('Sample image not found'));
+        });
+        setOrigSrc(SAMPLE_PATH);
+      } catch (error) {
+        console.warn('Failed to load sample image:', error);
+        setOrigSrc(PLACEHOLDER);
+      }
+    };
+    loadSampleImage();
   }, []);
 
   useEffect(() => {
@@ -261,10 +276,22 @@ export default function ImageTool() {
 
                       <button
                         className="px-3 py-2 rounded-md bg-neutral-800 text-gray-200 hover:bg-neutral-800/70 transition"
-                        onClick={() => {
+                        onClick={async () => {
                           setFile(null);
-                          setOrigSrc(SAMPLE_PATH);
                           setOrigInfo(null);
+                          try {
+                            // Pre-load the image to verify it exists
+                            const img = new Image();
+                            img.src = SAMPLE_PATH;
+                            await new Promise((resolve, reject) => {
+                              img.onload = resolve;
+                              img.onerror = () => reject(new Error('Sample image not found'));
+                            });
+                            setOrigSrc(SAMPLE_PATH);
+                          } catch (error) {
+                            console.warn('Failed to load sample image:', error);
+                            setOrigSrc(PLACEHOLDER);
+                          }
                         }}
                       >
                         Use sample
