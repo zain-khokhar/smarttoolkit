@@ -14,12 +14,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { formatSize, handleDownloadAll, handleDownloadAllSeparate } from "@/lib/compress";
 
 
-export default function ImgCompressor() {
+export default function ImageCompressor({routeFormat}) {
   // Each image: { id, file, url, checked, compressedBlob, compressedUrl, progress, error }
   const [images, setImages] = useState([]);
   const [quality, setQuality] = useState(80);
   const [removeMetadata, setRemoveMetadata] = useState(true);
-  const [outputFormat, setOutputFormat] = useState("webp");
+  const [outputFormat, setOutputFormat] = useState(routeFormat);
   const [isCompressing, setIsCompressing] = useState(false);
   const fileInputRef = useRef();
 
@@ -147,13 +147,11 @@ export default function ImgCompressor() {
         {/* Header */}
         <Card className="bg-gradient-to-r from-gray-900 to-gray-700 text-white border-0 rounded-none">
           <CardHeader className="pb-4">
-
             <CardTitle className="text-xl md:text-2xl">
-              Image Compressor
+              {routeFormat?.toUpperCase()} Image Compressor
             </CardTitle>
             <CardDescription className="text-gray-200 mt-2">
-              Reduce image size without losing quality. Supports multiple images.
-
+              Compress your {routeFormat?.toUpperCase()} images easily without losing much quality.
             </CardDescription>
           </CardHeader>
         </Card>
@@ -403,6 +401,7 @@ export default function ImgCompressor() {
                   <SelectContent>
                     <SelectItem value="webp">WebP</SelectItem>
                     <SelectItem value="jpeg">JPEG</SelectItem>
+                    <SelectItem value="jpg">JPG</SelectItem>
                     <SelectItem value="png">PNG</SelectItem>
                   </SelectContent>
                 </Select>

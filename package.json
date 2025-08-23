@@ -2,7 +2,6 @@
   "name": "smarttoolkit",
   "version": "1.0.0",
   "description": "A toolkit with various smart tools.",
-  "main": "src/app/page.js",
   "scripts": {
     "build": "next build",
     "start": "next start",

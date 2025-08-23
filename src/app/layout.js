@@ -1,6 +1,4 @@
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { NavigationMenu } from "@/components/ui/navigation-menu";
 import { NavBar } from "../../NavBar";
 
 

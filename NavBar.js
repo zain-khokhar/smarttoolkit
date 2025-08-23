@@ -21,7 +21,7 @@ export function NavBar() {
         <div className="flex items-center gap-3 ">
           <Link href="/" className="flex items-center gap-2">
             {/* <Image
-              src="/logo.png" // change this to your logo path
+              src="/logo.webp" // change this to your logo path
               alt="Logo"
               width={32}
               height={32}
@@ -60,10 +60,10 @@ export function NavBar() {
               <NavigationMenuTrigger>Image Compressor</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid w-[200px] gap-2 p-2">
-                  <li><NavigationMenuLink asChild><Link href="/img-compressor">JPEG Compressor</Link></NavigationMenuLink></li>
-                  <li><NavigationMenuLink asChild><Link href="/img-compressor">JPG Compressor</Link></NavigationMenuLink></li>
-                  <li><NavigationMenuLink asChild><Link href="/img-compressor">WebP Compressor</Link></NavigationMenuLink></li>
-                  <li><NavigationMenuLink asChild><Link href="/img-compressor">PNG Compressor</Link></NavigationMenuLink></li>
+                  <li><NavigationMenuLink asChild><Link href="/tools/jpeg">JPEG Compressor</Link></NavigationMenuLink></li>
+                  <li><NavigationMenuLink asChild><Link href="/tools/jpg">JPG Compressor</Link></NavigationMenuLink></li>
+                  <li><NavigationMenuLink asChild><Link href="/tools/webp">WebP Compressor</Link></NavigationMenuLink></li>
+                  <li><NavigationMenuLink asChild><Link href="/tools/png">PNG Compressor</Link></NavigationMenuLink></li>
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
