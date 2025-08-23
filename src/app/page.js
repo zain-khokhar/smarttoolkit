@@ -2,6 +2,7 @@
 import ClientHero from '@/components/ClientHero';
 import ClientFeatures from '@/components/ClientFeatures';
 import ToolsDemo from '@/components/ToolsDemo';
+import Preview from '@/components/Preview';
 
 export const metadata = {
   title: 'SmartToolkit: Fast, Reliable, AI-Powered Productivity Toolkit',
@@ -24,7 +25,10 @@ export default function Page() {
           <p className="text-lg mb-8">Try interactive before/after previews for image & video tools.</p>
         </div>
         <ToolsDemo />
-      </main>
+      </main> 
+      <div>
+      <Preview />
+      </div>
       <footer className="py-8 px-4 bg-indigo-800 text-white">
         <div className="max-w-4xl mx-auto flex justify-between items-center">
           <p>&copy; 2025 SmartToolkit. All rights reserved.</p>
