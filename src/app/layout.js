@@ -1,58 +1,58 @@
 import "./globals.css";
 import { NavBar } from "../../NavBar";
 
-// export const metadata = {
-//   title: "SmartToolkit - Fast, Reliable & Privacy-Focused Online Utilities",
-//   description:
-//     "SmartToolkit.online offers free, fast, and reliable online software utilities with zero ads and full privacy. Convert files, compress images, optimize documents, and boost productivity with secure results.",
-//   keywords: [
-//     "free online tools",
-//     "file converter",
-//     "image compressor",
-//     "PDF tools",
-//     "privacy focused utilities",
-//     "no ads software utilities",
-//     "fast online converter",
-//     "SmartToolkit"
-//   ],
-//   authors: [{ name: "SmartToolkit Team", url: "https://smarttoolkit.online" }],
-//   creator: "SmartToolkit",
-//   publisher: "SmartToolkit.online",
-//   alternates: {
-//     canonical: "https://smarttoolkit.online",
-//   },
-//   openGraph: {
-//     type: "website",
-//     url: "https://smarttoolkit.online",
-//     title: "SmartToolkit - Fast, Reliable & Privacy-Focused Online Utilities",
-//     description:
-//       "Use SmartToolkit.online for free, fast, and reliable online utilities. 100% ad-free, secure, and privacy-first file conversions, optimizations, and productivity tools.",
-//     siteName: "SmartToolkit",
-//     locale: "en_US",
-//     images: [
-//       {
-//         url: "https://smarttoolkit.online/og-image.png",
-//         width: 1200,
-//         height: 630,
-//         alt: "SmartToolkit - Free Online Utilities",
-//       },
-//     ],
-//   },
-//   twitter: {
-//     card: "summary_large_image",
-//     title: "SmartToolkit - Fast, Reliable & Privacy-Focused Online Utilities",
-//     description:
-//       "SmartToolkit.online provides ad-free, privacy-first software utilities. Convert, compress, and optimize files online with speed and reliability.",
-//     creator: "@SmartToolkit",
-//     images: ["https://smarttoolkit.online/og-image.png"],
-//   },
-//   metadataBase: new URL("https://smarttoolkit.online"),
-//   robots: {
-//     index: true,
-//     follow: true,
-//   },
-//   category: "utilities",
-// };
+export const metadata = {
+  title: "SmartToolkit - Fast, Reliable & Privacy-Focused Online Utilities",
+  description:
+    "SmartToolkit.online offers free, fast, and reliable online software utilities with zero ads and full privacy. Convert files, compress images, optimize documents, and boost productivity with secure results.",
+  keywords: [
+    "free online tools",
+    "file converter",
+    "image compressor",
+    "PDF tools",
+    "privacy focused utilities",
+    "no ads software utilities",
+    "fast online converter",
+    "SmartToolkit"
+  ],
+  authors: [{ name: "SmartToolkit Team", url: "https://smarttoolkit.online" }],
+  creator: "SmartToolkit",
+  publisher: "SmartToolkit.online",
+  alternates: {
+    canonical: "https://smarttoolkit.online",
+  },
+  openGraph: {
+    type: "website",
+    url: "https://smarttoolkit.online",
+    title: "SmartToolkit - Fast, Reliable & Privacy-Focused Online Utilities",
+    description:
+      "Use SmartToolkit.online for free, fast, and reliable online utilities. 100% ad-free, secure, and privacy-first file conversions, optimizations, and productivity tools.",
+    siteName: "SmartToolkit",
+    locale: "en_US",
+    images: [
+      {
+        url: "https://smarttoolkit.online/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "SmartToolkit - Free Online Utilities",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SmartToolkit - Fast, Reliable & Privacy-Focused Online Utilities",
+    description:
+      "SmartToolkit.online provides ad-free, privacy-first software utilities. Convert, compress, and optimize files online with speed and reliability.",
+    creator: "@SmartToolkit",
+    images: ["https://smarttoolkit.online/og-image.png"],
+  },
+  metadataBase: new URL("https://smarttoolkit.online"),
+  robots: {
+    index: true,
+    follow: true,
+  },
+  category: "utilities",
+};
 
 
 // Root layout component
