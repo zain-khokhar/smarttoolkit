@@ -3,6 +3,7 @@ import ClientHero from '@/components/ClientHero';
 import ClientFeatures from '@/components/ClientFeatures';
 import ToolsDemo from '@/components/ToolsDemo';
 import Preview from '@/components/Preview';
+import Link from 'next/link';
 
 export const metadata = {
   title: 'SmartToolkit: Fast, Reliable, AI-Powered Productivity Toolkit',
@@ -19,25 +20,52 @@ export default function Page() {
         <h2 className="text-3xl font-bold text-center mb-12">Key Features</h2>
         <ClientFeatures />
       </section>
-      <main className="min-h-screen bg-background text-foreground">
+      {/* <main className="min-h-screen bg-background text-foreground">
         <div className="py-20 px-6 max-w-6xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">SmartToolkit — Live Tool Previews</h1>
           <p className="text-lg mb-8">Try interactive before/after previews for image & video tools.</p>
         </div>
         <ToolsDemo />
-      </main> 
+      </main>  */}
       <div>
-      <Preview />
+      {/* <Preview /> */}
       </div>
-      <footer className="py-8 px-4 bg-indigo-800 text-white">
-        <div className="max-w-4xl mx-auto flex justify-between items-center">
-          <p>&copy; 2025 SmartToolkit. All rights reserved.</p>
-          <nav>
-            <a href="/privacy" className="mx-2">Privacy</a>
-            <a href="/contact" className="mx-2">Contact</a>
-          </nav>
+     <footer className="border-t border-gray-200 bg-white py-10 px-6 md:px-12 lg:px-20">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Converters */}
+        <div>
+          <h3 className="text-lg font-semibold mb-4 text-gray-900">Converters</h3>
+          <ul className="space-y-2 pl-2 text-gray-600">
+            <li><Link href="/png-to-png">PNG Converter</Link></li>
+            <li><Link href="/webp-to-webp">WebP Converter</Link></li>
+            <li><Link href="/jpeg-to-jpeg">JPEG Converter</Link></li>
+            <li><Link href="/tif-to-png">JPG Converter</Link></li>
+            <li><Link href="/gif-to-png">GIF Converter</Link></li>
+            <li><Link href="/avif-to-png">AVIF Converter</Link></li>
+            <li><Link href="/ico-to-png">ICO Converter</Link></li>
+            <li><Link href="/svg-to-png">SVG Converter</Link></li>
+            <li><Link href="/tiff-to-png">TIFF/TIF Converter</Link></li>
+            <li><Link href="/bmp-to-png">BMP Converter</Link></li>
+          </ul>
         </div>
-      </footer>
+
+        {/* Compressors */}
+        <div>
+          <h3 className="text-lg font-semibold mb-4 text-gray-900">Compressors</h3>
+          <ul className="space-y-2 pl-2 text-gray-600">
+            <li><Link href="/tools/jpeg">JPEG Compressor</Link></li>
+            <li><Link href="/tools/jpg">JPG Compressor</Link></li>
+            <li><Link href="/tools/webp">WebP Compressor</Link></li>
+            <li><Link href="/tools/png">PNG Compressor</Link></li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Bottom note */}
+      <div className="mt-10 text-center text-sm text-gray-500">
+        &copy; {new Date().getFullYear()} SmartToolkit. All rights reserved.
+      </div>
+    </footer>
     </div>
   );
 }
