@@ -45,7 +45,12 @@ export default function ImageConverter({ defaultFrom = "png", defaultTo = "jpg" 
         const arr = Array.from(incoming).map((x) => (x.file ? x.file : x));
         const accepted = arr.map((file) => {
             const fmt = guessFormatKey(file.name) || guessFormatKey(file.type);
-            return { file, id: crypto.randomUUID(), srcFmt: fmt };
+            const id = (crypto.randomUUID)
+                ? crypto.randomUUID()
+                : Math.random().toString(36).substring(2) + Date.now().toString(36);
+
+            return { file, id, srcFmt: fmt };
+            // return { file, id: crypto.randomUUID(), srcFmt: fmt };
         });
         setFiles((prev) => [...prev, ...accepted]);
         setSelected((prev) => [...prev, ...accepted.map((f) => f.id)]);
@@ -313,8 +318,8 @@ export default function ImageConverter({ defaultFrom = "png", defaultTo = "jpg" 
                                         <div
                                             key={f.id}
                                             className={`border rounded-lg p-3 flex flex-col items-center min-w-[200px] ${selected.includes(f.id)
-                                                    ? "ring-2 ring-blue-500"
-                                                    : "ring-0"
+                                                ? "ring-2 ring-blue-500"
+                                                : "ring-0"
                                                 }`}
                                         >
                                             <input

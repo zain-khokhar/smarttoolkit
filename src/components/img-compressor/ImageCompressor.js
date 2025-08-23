@@ -192,7 +192,7 @@ export default function ImageCompressor({routeFormat}) {
               {images.map((img) => (
                 <Card
                   key={img.id}
-                  className="relative overflow-hidden flex-shrink-0 w-48"
+                  className="relative overflow-hidden flex-shrink-0 w-48 max-sm:w-48 "
                 >
                   <CardContent className="p-2 flex flex-col items-center">
                     {/* Delete Button */}
@@ -231,7 +231,7 @@ export default function ImageCompressor({routeFormat}) {
                     <img
                       src={img.url}
                       alt={img.file.name}
-                      className="rounded-lg object-contain border mb-3"
+                      className="rounded-lg object-contain border mb-3 max-sm:w-32 max-sm:h-32"
                     />
 
                     {/* File Info */}
