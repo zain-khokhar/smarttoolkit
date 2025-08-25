@@ -31,7 +31,7 @@ export const metadata = {
     locale: "en_US",
     images: [
       {
-        url: "https://smarttoolkit.online/og-image.png",
+        url: "https://smarttoolkit.online/logo.webp",
         width: 1200,
         height: 630,
         alt: "SmartToolkit - Free Online Utilities",
@@ -44,7 +44,7 @@ export const metadata = {
     description:
       "SmartToolkit.online provides ad-free, privacy-first software utilities. Convert, compress, and optimize files online with speed and reliability.",
     creator: "@SmartToolkit",
-    images: ["https://smarttoolkit.online/og-image.png"],
+    images: ["https://smarttoolkit.online/logo.webp"],
   },
   metadataBase: new URL("https://smarttoolkit.online"),
   robots: {
