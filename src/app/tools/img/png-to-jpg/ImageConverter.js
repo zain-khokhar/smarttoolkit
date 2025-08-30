@@ -165,9 +165,9 @@ export default function ImageConverter({ defaultFrom = "png", defaultTo = "jpg" 
         <main className="min-h-screen bg-gray-50 dark:bg-black flex flex-col items-center py-10 px-4">
             <Card className="w-full max-w-4xl shadow-2xl rounded-2xl">
                 <CardContent className="p-6 space-y-6">
-                    <h1 className="text-3xl font-bold text-center">
+                    <h2 className="text-3xl font-bold text-center">
                         Convert {sourceFormat.toUpperCase()} → {targetFormat.toUpperCase()}
-                    </h1>
+                    </h2>
                     <p className="text-center text-gray-500 text-sm">
                         Free online tool to convert {sourceFormat.toUpperCase()} images into{" "}
                         {targetFormat.toUpperCase()} format instantly.
