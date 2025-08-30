@@ -47,10 +47,6 @@ export const metadata = {
     images: ["https://smarttoolkit.online/logo.webp"],
   },
   metadataBase: new URL("https://smarttoolkit.online"),
-  robots: {
-    index: true,
-    follow: true,
-  },
   category: "utilities",
 };
 

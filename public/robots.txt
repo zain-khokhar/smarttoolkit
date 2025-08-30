@@ -1,0 +1,14 @@
+# robots.txt for Next.js 15 app
+
+User-agent: *
+Allow: /
+
+# Block Next.js internal paths
+Disallow: /_next/
+Disallow: /api/
+
+# Block static build/export files (if any)
+Disallow: /static/
+
+# Sitemap (important for SEO)
+Sitemap: https://smarttoolkit.online/sitemap.xml

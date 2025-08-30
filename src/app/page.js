@@ -49,10 +49,6 @@ export const metadata = {
     images: ["https://smarttoolkit.online/og-image.png"],
   },
   metadataBase: new URL("https://smarttoolkit.online"),
-  robots: {
-    index: true,
-    follow: true,
-  },
   category: "utilities",
 };
 export default function Page() {
