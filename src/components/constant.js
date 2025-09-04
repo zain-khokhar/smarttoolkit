@@ -495,3 +495,35 @@ export const convertData = {
         keywords: "gif converter, convert gif, bulk gif conversion, optimize gif, gif to mp4, gif to webp, free online gif tool"
     }
 };
+export const faqs = [
+  {
+    question: "What is MDX and why should I use it?",
+    answer:
+      "MDX combines Markdown with JSX, allowing you to write clean text content and embed React components directly into your documents. It's perfect for building blogs, documentation, and tutorials with interactive features.",
+  },
+  {
+    question: "Does this converter work with Markdown?",
+    answer:
+      "Yes! It generates clean and optimized Markdown or MDX output. This means you can easily integrate it with frameworks like Next.js, Gatsby, or other static site generators.",
+  },
+  {
+    question: "Is the Rich Text to MDX Converter free?",
+    answer:
+      "Absolutely. This tool is 100% free to use. You don't need to sign up or share any payment details — just paste your text and get instant results.",
+  },
+  {
+    question: "Can I use the generated MDX in Next.js or Gatsby?",
+    answer:
+      "Yes, the MDX output works seamlessly with both Next.js and Gatsby. Simply copy and paste the generated code into your project for instant integration.",
+  },
+  {
+    question: "Does it clean up messy formatting from Google Docs or Word?",
+    answer:
+      "Yes. It automatically removes unwanted inline styles, unnecessary HTML tags, and other clutter to produce clean, developer-friendly MDX code.",
+  },
+  {
+    question: "Can I export the MDX as a file?",
+    answer:
+      "Currently, you can copy the MDX directly to your clipboard. File export features will be added soon, allowing you to download `.md` or `.mdx` files directly.",
+  },
+];
