@@ -29,11 +29,11 @@ export default function RootLayout({ children }) {
       "price": "0",
       "priceCurrency": "USD"
     },
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://smarttoolkit.online/search?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
+    // "potentialAction": {
+    //   "@type": "SearchAction",
+    //   "target": "https://smarttoolkit.online/search?q={search_term_string}",
+    //   "query-input": "required name=search_term_string"
+    // }
   };
 
   return (

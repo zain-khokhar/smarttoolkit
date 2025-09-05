@@ -2,24 +2,102 @@
 import ClientHero from '@/components/ClientHero';
 import ClientFeatures from '@/components/ClientFeatures';
 import Link from 'next/link';
+import Script from 'next/script';
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://smarttoolkit.online/#website",
+      url: "https://smarttoolkit.online",
+      name: "SmartToolkit",
+      description:
+        "SmartToolkit.online offers free, fast, and reliable online software utilities with zero ads and full privacy. Convert files, compress images, optimize documents, and boost productivity with secure results.",
+      publisher: {
+        "@id": "https://smarttoolkit.online/#organization",
+      },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: "https://smarttoolkit.online/search?q={search_term_string}",
+        "query-input": "required name=search_term_string",
+      },
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://smarttoolkit.online/#organization",
+      name: "SmartToolkit",
+      url: "https://smarttoolkit.online",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://smarttoolkit.online/logo.png",
+        width: 512,
+        height: 512,
+      },
+      sameAs: [
+        "https://twitter.com/SmartToolkit",
+        "https://facebook.com/SmartToolkit",
+        "https://linkedin.com/company/smarttoolkit",
+      ],
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://smarttoolkit.online/#webpage",
+      url: "https://smarttoolkit.online",
+      name: "SmartToolkit - Fast, Reliable & Privacy-Focused Online Utilities",
+      description:
+        "SmartToolkit.online provides free, ad-free, and privacy-first tools to convert files, compress images, and optimize documents securely and quickly.",
+      isPartOf: {
+        "@id": "https://smarttoolkit.online/#website",
+      },
+      inLanguage: "en-US",
+      primaryImageOfPage: {
+        "@type": "ImageObject",
+        url: "https://smarttoolkit.online/og-image.png",
+        width: 1200,
+        height: 630,
+      },
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "Is SmartToolkit really free to use?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Yes, SmartToolkit is 100% free to use with no hidden costs, subscriptions, or advertisements. All tools are accessible instantly.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Does SmartToolkit store my files or data?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "No, your files and data are never stored on our servers. Processing happens securely and files are automatically deleted after conversion.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "What types of files can I convert?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "SmartToolkit supports images, PDFs, documents, and various file formats. New tools and formats are added regularly.",
+          },
+        },
+      ],
+    },
+  ],
+};
 
+// src/app/page.js
 export const metadata = {
   title: "SmartToolkit - Fast, Reliable & Privacy-Focused Online Utilities",
   description:
     "SmartToolkit.online offers free, fast, and reliable online software utilities with zero ads and full privacy. Convert files, compress images, optimize documents, and boost productivity with secure results.",
-  keywords: [
-    "free online tools",
-    "file converter",
-    "image compressor",
-    "PDF tools",
-    "privacy focused utilities",
-    "no ads software utilities",
-    "fast online converter",
-    "SmartToolkit"
-  ],
   authors: [{ name: "SmartToolkit Team", url: "https://smarttoolkit.online" }],
   creator: "SmartToolkit",
   publisher: "SmartToolkit.online",
+  metadataBase: new URL("https://smarttoolkit.online"),
   alternates: {
     canonical: "https://smarttoolkit.online",
   },
@@ -48,12 +126,17 @@ export const metadata = {
     creator: "@SmartToolkit",
     images: ["https://smarttoolkit.online/og-image.png"],
   },
-  metadataBase: new URL("https://smarttoolkit.online"),
   category: "utilities",
 };
+
 export default function Page() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <Script
+        id="json-ld-landing"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <ClientHero />
       <section className="py-16 px-4 md:px-8 lg:px-16">
         <h2 className="text-3xl font-bold text-center mb-12">Key Features</h2>

@@ -26,32 +26,51 @@ export async function generateMetadata({ params }) {
     const { slug } = await params;
     const [from, to] = slug.split("-to-");
 
+    // Supported formats
+    const formats = ["jpg", "jpeg", "png", "gif", "webp", "bmp", "tiff"];
+
     if (!formats.includes(from) || !formats.includes(to)) {
         return {};
     }
 
-    const title = `${from.toUpperCase()} to ${to.toUpperCase()} Image Converter - Free, Fast, Bulk, Private, No ads`;
-    const description = `Easily convert ${from.toUpperCase()} images into ${to.toUpperCase()} format using our free online image converter. Free, Fast, secure, Bulk, no ads and no quality loss.`;
+    const baseUrl = "https://smarttoolkit.online";
+    const url = `${baseUrl}/${slug}`;
+    const title = `${from.toUpperCase()} to ${to.toUpperCase()} Image Converter - Free, Fast, Bulk, Private, No Ads`;
+    const description = `Easily convert ${from.toUpperCase()} images into ${to.toUpperCase()} format using our free online image converter. Free, fast, secure, bulk conversion, no ads, and no quality loss.`;
+
+    // Generate dynamic OG image
+    const ogImage = `${baseUrl}/og-image/${from}-to-${to}.png`;
 
     return {
         title,
         description,
         alternates: {
-            canonical: `/${slug}`,
+            canonical: url,
         },
         openGraph: {
             title,
             description,
-            url: `/${slug}`,
+            url,
             type: "website",
+            images: [
+                {
+                    url: ogImage,
+                    width: 1200,
+                    height: 630,
+                    alt: `${from.toUpperCase()} to ${to.toUpperCase()} converter`,
+                },
+            ],
         },
         twitter: {
             card: "summary_large_image",
             title,
             description,
+            images: [ogImage],
         },
+        metadataBase: new URL(baseUrl),
     };
 }
+
 
 export default async function page({ params }) {
     const { slug } = await params;
@@ -111,7 +130,7 @@ export default async function page({ params }) {
 
             <ImageConverter defaultFrom={from} defaultTo={to} />
 
-              <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
 
                 {/* Intro Section */}
                 <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl p-8 shadow-lg">
@@ -182,7 +201,7 @@ export default async function page({ params }) {
 
             </div>
 
-                        {/* FAQ Structured Data */}
+            {/* FAQ Structured Data */}
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
