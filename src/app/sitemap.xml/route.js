@@ -12,6 +12,7 @@ export async function GET() {
   // 1. Static routes
   const urls = [
     { url: `${baseUrl}/`, lastmod: now, changefreq: "weekly", priority: 1.0 },
+    { url: `${baseUrl}/schema-generator`, lastmod: now, changefreq: "monthly", priority: 0.8 },
     // { url: `${baseUrl}/about`, lastmod: now, changefreq: "yearly", priority: 0.5 },
     // { url: `${baseUrl}/contact`, lastmod: now, changefreq: "yearly", priority: 0.5 },
     // { url: `${baseUrl}/tools`, lastmod: now, changefreq: "weekly", priority: 0.7 },

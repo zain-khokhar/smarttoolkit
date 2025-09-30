@@ -83,6 +83,16 @@ export function NavBar() {
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>
+
+              {/* SEO Tools */}
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>SEO Tools</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-[200px] gap-2 p-2">
+                    <li><NavigationMenuLink asChild><Link href="/schema-generator">Schema Generator</Link></NavigationMenuLink></li>
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
         </div>
@@ -142,6 +152,16 @@ export function NavBar() {
                         <li><Link href="/tools/jpg" onClick={handleClose}>JPG Compressor</Link></li>
                         <li><Link href="/tools/webp" onClick={handleClose}>WebP Compressor</Link></li>
                         <li><Link href="/tools/png" onClick={handleClose}>PNG Compressor</Link></li>
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  {/* SEO Tools */}
+                  <AccordionItem value="seo-tools">
+                    <AccordionTrigger>SEO Tools</AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="space-y-2 pl-2">
+                        <li><Link href="/schema-generator" onClick={handleClose}>Schema Generator</Link></li>
                       </ul>
                     </AccordionContent>
                   </AccordionItem>

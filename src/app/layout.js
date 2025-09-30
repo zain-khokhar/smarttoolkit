@@ -24,16 +24,7 @@ export default function RootLayout({ children }) {
         "url": "https://smarttoolkit.online/logo.webp" // replace with your real logo
       }
     },
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    // "potentialAction": {
-    //   "@type": "SearchAction",
-    //   "target": "https://smarttoolkit.online/search?q={search_term_string}",
-    //   "query-input": "required name=search_term_string"
-    // }
+ 
   };
 
   return (
