@@ -36,7 +36,20 @@ export default function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
         />
       </head>
-      <body className="antialiased">
+
+  <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-FYJZQ0RSVB"
+        strategy="afterInteractive"
+      />
+      <script id="gtag-init" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-FYJZQ0RSVB');
+        `}
+      </script>
+            <body className="antialiased">
         <NavBar />
         {children}
       </body>
