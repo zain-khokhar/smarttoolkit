@@ -1,1 +1,3 @@
-// UI for PDF Merge tool
+export default function PdfMergePage() {
+  return <div>PDF Merge Tool Coming Soon</div>;
+}
