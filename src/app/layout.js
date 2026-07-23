@@ -1,8 +1,6 @@
 import "./globals.css";
 import { NavBar } from "../../NavBar";
-
-
-
+import Script from "next/script";
 
 // Root layout component
 export default function RootLayout({ children }) {
@@ -37,19 +35,23 @@ export default function RootLayout({ children }) {
         />
       </head>
 
-  <Script
+      <Script
         src="https://www.googletagmanager.com/gtag/js?id=G-FYJZQ0RSVB"
         strategy="afterInteractive"
       />
-      <script id="gtag-init" strategy="afterInteractive">
-        {`
+      <Script
+        id="gtag-init"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
           gtag('config', 'G-FYJZQ0RSVB');
-        `}
-      </script>
-            <body className="antialiased">
+        `,
+        }}
+      />
+      <body className="antialiased">
         <NavBar />
         {children}
       </body>
